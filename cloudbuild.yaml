@@ -1,0 +1,7 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/fine-slice-463202-g1/my-image', '.']
+options:
+  logging: CLOUD_LOGGING_ONLY
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+serviceAccount: 'projects/fine-slice-463202-g1/serviceAccounts/mamuflih13@fine-slice-463202-g1.iam.gserviceaccount.com'
