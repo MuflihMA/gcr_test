@@ -1,31 +1,34 @@
 # steps:
-#   - name: 'gcr.io/cloud-builders/docker'
-#     args: ['build', '-t', 'gcr.io/fine-slice-463202-g1/my-image', '.']
-# options:
-#   logging: CLOUD_LOGGING_ONLY
-#   defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
-# serviceAccount: 'projects/fine-slice-463202-g1/serviceAccounts/mamuflih13@fine-slice-463202-g1.iam.gserviceaccount.com'
-
+# # Build the image
+# - name: 'gcr.io/cloud-builders/docker'
+#   args: ['build', '-t', 'LOCATION-docker.pkg.dev/fine-slice-463202-g1/gcr_test/gcr_test/europe-west1:$COMMIT_SHA', '.']
+# # Push the image to Artifact Registry
+# - name: 'gcr.io/cloud-builders/docker'
+#   args: ['push', 'LOCATION-docker.pkg.dev/fine-slice-463202-g1/gcr_test/gcr_test/gcr-test:$COMMIT_SHA']
+# # Deploy image to Cloud Run
+# - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#   entrypoint: gcloud
+#   args: 
+#     - 'run'
+#     - 'deploy'
+#     - 'gcr-test'
+#     - '--image'
+#     - 'LOCATION-docker.pkg.dev/fine-slice-463202-g1/gcr_test/gcr_test/gcr-test:$COMMIT_SHA'
+#     - '--region'
+#     - 'SERVICE_REGION'
+# images:
+# - 'LOCATION-docker.pkg.dev/fine-slice-463202-g1/gcr_test/gcr_test/gcr-test:$COMMIT_SHA'
 
 steps:
 # Build the image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'LOCATION-docker.pkg.dev/fine-slice-463202-g1/gcr_test/gcr_test/europe-west1:$COMMIT_SHA', '.']
+  args: ['build', '-t', 'LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE', '.']
 # Push the image to Artifact Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'LOCATION-docker.pkg.dev/fine-slice-463202-g1/gcr_test/gcr_test/gcr-test:$COMMIT_SHA']
+  args: ['push', 'LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE']
 # Deploy image to Cloud Run
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
-  args: 
-    - 'run'
-    - 'deploy'
-    - 'gcr-test'
-    - '--image'
-    - 'LOCATION-docker.pkg.dev/fine-slice-463202-g1/gcr_test/gcr_test/gcr-test:$COMMIT_SHA'
-    - '--region'
-    - 'SERVICE_REGION'
+  args: ['run', 'deploy', 'SERVICE_NAME', '--image', 'LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE', '--region', 'SERVICE_REGION']
 images:
-- 'LOCATION-docker.pkg.dev/fine-slice-463202-g1/gcr_test/gcr_test/gcr-test:$COMMIT_SHA'
-
-
+- 'LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE'
