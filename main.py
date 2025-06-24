@@ -78,7 +78,8 @@ async def video_analytics(file: Annotated[UploadFile, File()],
         cap.release()
         out.release()
 
-        final_output_path = os.path.join("outputs", f"processed_{file.filename}")
+        # final_output_path = os.path.join("outputs", f"processed_{file.filename}")
+        final_output_path = os.path.join("/tmp", f"processed_{file.filename}")
         os.makedirs("outputs", exist_ok=True)
         shutil.copy(temp_output_path, final_output_path)
 

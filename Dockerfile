@@ -24,6 +24,16 @@ WORKDIR /app
 #     wget \
 #     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y \
+    libglib2.0-0 \
+    libsm6 \
+    libxrender1 \
+    libxext6 \
+    ffmpeg \
+    libopencv-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+
 # Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
@@ -31,6 +41,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Copy application code
 COPY . .
+# COPY model /app/model
+
 
 # Expose port 
 EXPOSE 8080
