@@ -3,35 +3,36 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Install system dependencies
-# RUN apt-get update && apt-get install -y \
-#     libglib2.0-0 \
-#     libsm6 \
-#     libxext6 \
-#     libxrender-dev \
-#     libgomp1 \
-#     libgtk-3-0 \
-#     libavcodec-dev \
-#     libavformat-dev \
-#     libswscale-dev \
-#     libgstreamer-plugins-base1.0-dev \
-#     libgstreamer1.0-dev \
-#     libpng-dev \
-#     libjpeg-dev \
-#     libopenexr-dev \
-#     libtiff-dev \
-#     libwebp-dev \
-#     git \
-#     wget \
-#     && rm -rf /var/lib/apt/lists/*
-
 RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     libsm6 \
-    libxrender1 \
     libxext6 \
-    ffmpeg \
+    libxrender-dev \
+    libgomp1 \
+    libgtk-3-0 \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    libgstreamer-plugins-base1.0-dev \
+    libgstreamer1.0-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libopenexr-dev \
+    libtiff-dev \
+    libwebp-dev \
     libopencv-dev \
+    git \
+    wget \
     && rm -rf /var/lib/apt/lists/*
+
+# RUN apt-get update && apt-get install -y \
+#     libglib2.0-0 \
+#     libsm6 \
+#     libxrender1 \
+#     libxext6 \
+#     ffmpeg \
+#     libopencv-dev \
+#     && rm -rf /var/lib/apt/lists/*
 
 
 # Install dependencies
