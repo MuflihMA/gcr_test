@@ -3,15 +3,28 @@ import cv2
 import shutil
 import uvicorn
 import tempfile
+
 from ultralytics import YOLO
 from typing import Annotated
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks
 from fastapi.responses import FileResponse, HTMLResponse, Response
 
+import logging
+import google.cloud.logging
+
 app = FastAPI(title = "Google Cloud Run Testing")
+
+client = google.cloud.logging.Client()
+client.setup_logging(log_level=logging.DEBUG)
+
+log_format = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+cloud_logger = logging.getLogger('cloudLogger')
+cloud_logger.setLevel(logging.DEBUG)
+cloud_logger.setFormatter(log_format)
 
 @app.get("/", response_class=HTMLResponse)
 def read_root():
+    cloud_logger.debug("Requested root endpoint")
     html_content = """
     <!DOCTYPE html>
     <html>
@@ -28,18 +41,28 @@ def read_root():
 
 @app.get("/favicon.ico")
 def favicon():
+    cloud_logger.debug("Requested favicorn")
     return Response(status_code=204)
+
 
 @app.post("/video_analytics")
 async def video_analytics(file: Annotated[UploadFile, File()],
                           background_tasks: BackgroundTasks):
+    
+    logging.getLogger('ultralytics').setLevel(logging.ERROR)
+
+    cloud_logger.debug(f"Starting video processing for file: {file.filename}")
+
     with tempfile.TemporaryDirectory() as tmpdir:
         input_path = os.path.join(tmpdir, file.filename)
         with open(input_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
 
+        cloud_logger.debug(f"Saved uploaded file to: {input_path}")
+
         cap = cv2.VideoCapture(input_path)
         if not cap.isOpened():
+            cloud_logger.error("Cannot open video file: {input_path}")
             raise ValueError(f"Cannot open video file: {input_path}")
 
         temp_output_path = os.path.join(tmpdir, "output.mp4")
@@ -48,15 +71,20 @@ async def video_analytics(file: Annotated[UploadFile, File()],
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
+        cloud_logger.info(f"Video properties: FPS: {fps}, Width: {width}, Height: {height}")
+
         model = YOLO('model/yolo11n.pt')
         model.fuse()
 
         out = cv2.VideoWriter(temp_output_path, fourcc, fps, (width, height))
 
+        frame_count = 0
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
                 break
+            
+            frame_count += 1
 
             results = model.track(frame, tracker="bytetrack.yaml", persist=True)
             if results[0].boxes:
@@ -75,6 +103,7 @@ async def video_analytics(file: Annotated[UploadFile, File()],
 
             out.write(frame)
 
+        cloud_logger.info(f"Finished [rocessed {frame_count} frames")
         cap.release()
         out.release()
 
@@ -82,6 +111,8 @@ async def video_analytics(file: Annotated[UploadFile, File()],
         final_output_path = os.path.join("/tmp", f"processed_{file.filename}")
         os.makedirs("outputs", exist_ok=True)
         shutil.copy(temp_output_path, final_output_path)
+
+        cloud_logger.info(f"Saved processed video to: {final_output_path}")
 
         background_tasks.add_task(os.remove, final_output_path)
 
