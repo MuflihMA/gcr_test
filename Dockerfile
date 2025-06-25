@@ -50,6 +50,7 @@ COPY . .
 EXPOSE 8080
 
 # Set environment variables
+ENV GLOG_minloglevel=2
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 

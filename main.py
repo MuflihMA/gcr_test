@@ -115,7 +115,7 @@ async def video_analytics(file: Annotated[UploadFile, File()],
 
             out.write(frame)
 
-        logger.info(f"Finished [rocessed {frame_count} frames")
+        logger.info(f"Finished processed {frame_count} frames")
         cap.release()
         out.release()
 
