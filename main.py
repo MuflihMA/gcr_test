@@ -12,7 +12,10 @@ from fastapi.responses import FileResponse, HTMLResponse, Response
 import logging
 import google.cloud.logging
 
-import torch
+from log_supressor import suppress_stderr
+
+with suppress_stderr:
+    import torch
 
 
 app = FastAPI(title = "Google Cloud Run Testing")
@@ -44,8 +47,8 @@ def read_root():
             <title>My Cloud Run App</title>
         </head>
         <body>
-            <h1>Welcome to my Google Cloud Run test app</h1>
-            <p>This is a simple HTML page served by FastAPI.</p>
+            <h1>Selamat Datang di app Google Cloud Run buatan gueeeeh</h1>
+            <p>Ini HTML Page simple yang dibuat dengan FastAPI atau semcamnya gatau KMS</p>
         </body>
     </html>
     """
