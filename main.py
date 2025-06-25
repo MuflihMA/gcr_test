@@ -12,7 +12,12 @@ from fastapi.responses import FileResponse, HTMLResponse, Response
 import logging
 import google.cloud.logging
 
+import torch
+
+
 app = FastAPI(title = "Google Cloud Run Testing")
+
+torch.backends.nnpack.enabled = False
 
 client = google.cloud.logging.Client()
 client.setup_logging(log_level=logging.DEBUG)
