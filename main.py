@@ -9,13 +9,14 @@ from typing import Annotated
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks
 from fastapi.responses import FileResponse, HTMLResponse, Response
 
+import torch
 import logging
 import google.cloud.logging
 
-from log_supressor import suppress_stderr
+# from log_supressor import suppress_stderr
 
-with suppress_stderr:
-    import torch
+# with suppress_stderr:
+#     import torch
 
 
 app = FastAPI(title = "Google Cloud Run Testing")
